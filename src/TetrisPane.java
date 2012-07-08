@@ -146,11 +146,6 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		repaint();
 	}
 	
-	//bug: rotating the i-block when it first spawns
-	//causes it to lock into place at the top of the screen
-	//and spawn the next block
-	//possibly due to the block having negative coordinates
-	//when it rotates off the top of the screen
 	@Override
 	public void keyPressed(KeyEvent event) {
 		int keyCode = event.getKeyCode();

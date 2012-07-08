@@ -4,6 +4,7 @@ import java.util.List;
 
 public abstract class Tetromino {
 	protected List<Integer> blockPositions;
+	protected int currentRotation;
 		
 	public List<Integer> getBlockPositions() {
 		return blockPositions;
@@ -70,6 +71,18 @@ public abstract class Tetromino {
 			blockPositions = newPositions;
 		}
 	}	
+	
+	public boolean checkLegalRotation(List<Integer> newPositions){
+		for(Integer coord : newPositions){
+			Integer x = coord / 100;
+			Integer y = coord % 100;
+			if(x < 0 || x > 9 || y < 0 || y > 19){
+				return false;
+			}
+		}
+		
+		return true;		
+	}
 
 	public abstract void rotate();
 	
