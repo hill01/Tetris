@@ -40,7 +40,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		setPreferredSize(new Dimension(width, height));
 		setFocusable(true);
 		addKeyListener(this);
-		speed = 500; //milliseconds, length of one "turn"
+		speed = 1000; //milliseconds, length of one "turn"
 		timer = new Timer(speed, this);
 		timer.setInitialDelay(speed);
 		timer.start();
@@ -82,16 +82,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		drawBlock(occupiedSpaces, g);
 		drawBlock(currentTetromino.getBlockPositions(), g);
 	}
-	
-	private boolean checkEmptyPath(){
-		List<Integer> coords = currentTetromino.getNextPositions();
-		for(Integer coord : coords){
-			if(coord % 100 > 19 || grid.get(coord) == true){
-				return false;
-			}
-		}
-		return true;
-	}
+
 	
 	private void clearFullRows(){
 		//check each of 20 rows
@@ -134,8 +125,8 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if(checkEmptyPath()){			
-			currentTetromino.moveDown();
+		if(currentTetromino.checkLegalMove(currentTetromino.getNextPositions(), grid)){			
+			currentTetromino.moveDown(grid);
 		}else{
 			for(Integer coord : currentTetromino.getBlockPositions()){
 				grid.put(coord, true);
@@ -150,18 +141,18 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	public void keyPressed(KeyEvent event) {
 		int keyCode = event.getKeyCode();
 		if(keyCode == KeyEvent.VK_UP){
-			currentTetromino.rotate();
+			currentTetromino.rotate(grid);
 			repaint();
 		}else if(keyCode == KeyEvent.VK_DOWN){
-			if(checkEmptyPath()){			
-				currentTetromino.moveDown();
+			if(currentTetromino.checkLegalMove(currentTetromino.getNextPositions(), grid)){			
+				currentTetromino.moveDown(grid);
 				repaint();
 			}			
 		}else if(keyCode == KeyEvent.VK_LEFT){
-			currentTetromino.moveLeft();
+			currentTetromino.moveLeft(grid);
 			repaint();
 		}else if(keyCode == KeyEvent.VK_RIGHT){
-			currentTetromino.moveRight();
+			currentTetromino.moveRight(grid);
 			repaint();
 		}
 	}

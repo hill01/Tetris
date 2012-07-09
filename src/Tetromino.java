@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class Tetromino {
@@ -21,69 +22,53 @@ public abstract class Tetromino {
 		return nextPositions;
 	}
 	
-	public void moveDown(){
-		boolean isAtBottom = false;
+	public void moveDown(Map<Integer, Boolean> grid){
+		List<Integer> newPositions = new ArrayList<Integer>();
 		for(Integer block : blockPositions){
-			if(block % 100 == 19){
-				isAtBottom = true;
-			}
+			Integer newBlock = block + 1;
+			newPositions.add(newBlock);
 		}
-		if(!isAtBottom){
-			List<Integer> newPositions = new ArrayList<Integer>();
-			for(Integer block : blockPositions){
-				Integer newBlock = block + 1;
-				newPositions.add(newBlock);
-			}
+		if(checkLegalMove(newPositions, grid)){
 			blockPositions = newPositions;
 		}
 	}
 	
-	public void moveLeft(){
-		boolean isAtEdge = false;
+	public void moveLeft(Map<Integer, Boolean> grid){		
+		List<Integer> newPositions = new ArrayList<Integer>();
 		for(Integer block : blockPositions){
-			if(block / 100 == 0){
-				isAtEdge = true;
-			}
+			Integer newBlock = block - 100;
+			newPositions.add(newBlock);
 		}
-		if(!isAtEdge){
-			List<Integer> newPositions = new ArrayList<Integer>();
-			for(Integer block : blockPositions){
-				Integer newBlock = block - 100;
-				newPositions.add(newBlock);
-			}
+		if(checkLegalMove(newPositions, grid)){
 			blockPositions = newPositions;
 		}
 	}
 	
-	public void moveRight(){
-		boolean isAtEdge = false;
+	public void moveRight(Map<Integer, Boolean> grid){
+		List<Integer> newPositions = new ArrayList<Integer>();
 		for(Integer block : blockPositions){
-			if(block / 100 == 9){
-				isAtEdge = true;
-			}
+			Integer newBlock = block + 100;
+			newPositions.add(newBlock);
 		}
-		if(!isAtEdge){
-			List<Integer> newPositions = new ArrayList<Integer>();
-			for(Integer block : blockPositions){
-				Integer newBlock = block + 100;
-				newPositions.add(newBlock);
-			}
+		if(checkLegalMove(newPositions, grid)){
 			blockPositions = newPositions;
 		}
-	}	
+	}
 	
-	public boolean checkLegalRotation(List<Integer> newPositions){
+	public boolean checkLegalMove(List<Integer> newPositions, Map<Integer, Boolean> grid){
 		for(Integer coord : newPositions){
 			Integer x = coord / 100;
 			Integer y = coord % 100;
-			if(x < 0 || x > 9 || y < 0 || y > 19){
+			if(x < 0 || x > 9 || y < 0 || y > 19 || grid.get(coord) == true){
 				return false;
 			}
 		}
-		
 		return true;		
 	}
+	
+	public void rotate(Map<Integer, Boolean> grid){
+		//implemented differently for each tetromino
+	}
 
-	public abstract void rotate();
 	
 }

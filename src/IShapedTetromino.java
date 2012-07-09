@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class IShapedTetromino extends Tetromino{
@@ -14,7 +15,11 @@ public class IShapedTetromino extends Tetromino{
 	}
 	
 	@Override
-	public void rotate() {
+	public void rotate(Map<Integer, Boolean> grid) {
+		rotateHelper(grid);
+	}
+	
+	private boolean rotateHelper(Map<Integer, Boolean> grid){
 		Integer center = blockPositions.get(2);
 		List<Integer> newPositions = new ArrayList<Integer>();
 		if(currentRotation == 0){			
@@ -30,8 +35,11 @@ public class IShapedTetromino extends Tetromino{
 			newPositions.add(center + 100);
 			currentRotation = 0;
 		}
-		if(checkLegalRotation(newPositions)){
+		if(checkLegalMove(newPositions, grid)){
 			blockPositions = newPositions;
+			return true;
+		}else{
+			return false;
 		}
 	}
 
