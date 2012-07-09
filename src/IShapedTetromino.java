@@ -15,11 +15,7 @@ public class IShapedTetromino extends Tetromino{
 	}
 	
 	@Override
-	public void rotate(Map<Integer, Boolean> grid) {
-		rotateHelper(grid);
-	}
-	
-	private boolean rotateHelper(Map<Integer, Boolean> grid){
+	public void rotate(Map<Integer, Boolean> grid){
 		Integer center = blockPositions.get(2);
 		List<Integer> newPositions = new ArrayList<Integer>();
 		if(currentRotation == 0){			
@@ -37,9 +33,11 @@ public class IShapedTetromino extends Tetromino{
 		}
 		if(checkLegalMove(newPositions, grid)){
 			blockPositions = newPositions;
-			return true;
 		}else{
-			return false;
+			newPositions = wallKick(newPositions, grid);
+			if(checkLegalMove(newPositions, grid)){
+				blockPositions = newPositions;
+			}
 		}
 	}
 

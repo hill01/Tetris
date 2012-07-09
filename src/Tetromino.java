@@ -66,9 +66,28 @@ public abstract class Tetromino {
 		return true;		
 	}
 	
-	public void rotate(Map<Integer, Boolean> grid){
-		//implemented differently for each tetromino
+	public List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Boolean> grid){
+		List<Integer> newPosition = new ArrayList<Integer>();
+		//attempt to kick to the right
+		for(Integer block : failedRotation){
+			Integer newBlock = block + 100;
+			newPosition.add(newBlock);
+		}
+		
+		if(checkLegalMove(newPosition, grid)){
+			return newPosition;
+		}else{
+			//kick to the left, returns even if its not a legal move
+			newPosition = new ArrayList<Integer>();
+			for(Integer block : failedRotation){
+				Integer newBlock = block - 100;
+				newPosition.add(newBlock);
+			}
+			return newPosition;
+		}
 	}
-
 	
+	public void rotate(Map<Integer, Boolean> grid){
+		
+	}
 }
