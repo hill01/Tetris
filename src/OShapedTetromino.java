@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class OShapedTetromino extends Tetromino{
@@ -9,5 +10,9 @@ public class OShapedTetromino extends Tetromino{
 		for(int i = 0; i < 4; i++){
 			blockPositions.add(positions[i]);
 		}
+	}
+
+	@Override
+	public void rotate(Map<Integer, Boolean> grid) {
 	}
 }

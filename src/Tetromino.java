@@ -66,7 +66,7 @@ public abstract class Tetromino {
 		return true;		
 	}
 	
-	public List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Boolean> grid){
+	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Boolean> grid){
 		List<Integer> newPosition = new ArrayList<Integer>();
 		//attempt to kick to the right
 		for(Integer block : failedRotation){
@@ -87,7 +87,5 @@ public abstract class Tetromino {
 		}
 	}
 	
-	public void rotate(Map<Integer, Boolean> grid){
-		
-	}
+	public abstract void rotate(Map<Integer, Boolean> grid);
 }

@@ -115,19 +115,26 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	
 	private Tetromino nextTetromino(){
 		Random rand = new Random();
-		int next = rand.nextInt(2);
+		int next = rand.nextInt(7);
 		switch(next){
 			case 0: return new OShapedTetromino();
 			case 1: return new IShapedTetromino();
+			case 2: return new SShapedTetromino();
+			case 3: return new ZShapedTetromino();
+			case 4: return new TShapedTetromino();
+			case 5: return new LShapedTetromino();
+			case 6: return new JShapedTetromino();
 		}
 		return null;
 	}
 	
+	//locking blocks into place occurs in this method
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(currentTetromino.checkLegalMove(currentTetromino.getNextPositions(), grid)){			
 			currentTetromino.moveDown(grid);
 		}else{
+			//this is where the current piece gets locked into place
 			for(Integer coord : currentTetromino.getBlockPositions()){
 				grid.put(coord, true);
 			}
