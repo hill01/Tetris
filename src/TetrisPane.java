@@ -63,15 +63,25 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		for(Integer coord : coords){
 			int x = coord / 100 * blockSize;
 			int y = coord % 100 * blockSize;
-			g.setColor(Color.BLUE);
+			g.setColor(new Color(0, 0, 255));
 			g.fillRect(x, y, blockSize, blockSize);
-			g.setColor(Color.BLACK);
+			g.setColor(new Color(102, 102, 255));
+			g.drawLine(x + 1, y + 1, x + blockSize - 1, y + 1);
+			g.drawLine(x + 2, y + 2, x + blockSize - 2, y + 2);
+			g.drawLine(x + 1, y + 1, x + 1, y + blockSize - 1);
+			g.drawLine(x + 2, y + 2, x + 2, y + blockSize - 2);
+			g.setColor(new Color(0, 0, 204));
+			g.drawLine(x + 3, y + blockSize - 2, x + blockSize - 1, y + blockSize - 2);
+			g.drawLine(x + 2, y + blockSize - 1, x + blockSize - 1, y + blockSize - 1);
+			g.drawLine(x + blockSize - 2, y + 3, x + blockSize - 2, y + blockSize - 1);
+			g.drawLine(x + blockSize - 1, y + 2, x + blockSize - 1, y + blockSize - 1);
+			g.setColor(new Color(0, 0, 51));
 			g.drawRect(x, y, blockSize, blockSize);
 		}
 	}
 	
 	public void paintComponent(Graphics g){
-		g.setColor(Color.WHITE);
+		g.setColor(new Color(218, 227, 235));
 		g.fillRect(0, 0, width, height);
 		
 		List<Integer> occupiedSpaces = new ArrayList<Integer>();
