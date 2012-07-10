@@ -21,7 +21,9 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	private static int blockSize = 20; //determines the size of the panel
 	private static int width;
 	private static int height;
-	private static int speed;
+	private static int speed; //milliseconds, length of one "turn"
+	private static boolean lockInDelay; //if true block wont lock in
+	private static Tetromino currentTetromino;
 	
 	//Integer represents coordinates, the 100 digits represent x coordinates 0-9
 	//10 and 1 digits represent y coordinates 0-19
@@ -29,8 +31,6 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	//x = Integer / 100, y = Integer % 100
 	//grid contains only locked in blocks, not the active tetromino
 	private static Map<Integer, Boolean> grid = new HashMap<Integer, Boolean>();
-	
-	private static Tetromino currentTetromino;
 	
 	
 	public TetrisPane(){
@@ -40,10 +40,11 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		setPreferredSize(new Dimension(width, height));
 		setFocusable(true);
 		addKeyListener(this);
-		speed = 1000; //milliseconds, length of one "turn"
+		speed = 1000; 
 		timer = new Timer(speed, this);
 		timer.setInitialDelay(speed);
 		timer.start();
+		lockInDelay = true;
 		
 		currentTetromino = nextTetromino();
 		
@@ -113,7 +114,16 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		}
 	}
 	
+	private boolean gameOver(){
+		if(grid.get(300) == true || grid.get(400) == true || grid.get(500) == true || grid.get(600) == true){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	private Tetromino nextTetromino(){
+		//to do: make them spawn more 'evenly' over the short term
 		Random rand = new Random();
 		int next = rand.nextInt(7);
 		switch(next){
@@ -131,14 +141,21 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	//locking blocks into place occurs in this method
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		if(gameOver()){
+			//do some game over stuff
+		}
 		if(currentTetromino.checkLegalMove(currentTetromino.getNextPositions(), grid)){			
 			currentTetromino.moveDown(grid);
+		}else if(lockInDelay){
+			//delays lock in by one 'turn'
+			lockInDelay = false;
 		}else{
 			//this is where the current piece gets locked into place
 			for(Integer coord : currentTetromino.getBlockPositions()){
 				grid.put(coord, true);
 			}
 			currentTetromino = nextTetromino();
+			lockInDelay = true;
 		}
 		clearFullRows();
 		repaint();
@@ -149,17 +166,21 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		int keyCode = event.getKeyCode();
 		if(keyCode == KeyEvent.VK_UP){
 			currentTetromino.rotate(grid);
+			lockInDelay = true;
 			repaint();
 		}else if(keyCode == KeyEvent.VK_DOWN){
 			if(currentTetromino.checkLegalMove(currentTetromino.getNextPositions(), grid)){			
 				currentTetromino.moveDown(grid);
+				lockInDelay = false;
 				repaint();
 			}			
 		}else if(keyCode == KeyEvent.VK_LEFT){
 			currentTetromino.moveLeft(grid);
+			lockInDelay = true;
 			repaint();
 		}else if(keyCode == KeyEvent.VK_RIGHT){
 			currentTetromino.moveRight(grid);
+			lockInDelay = true;
 			repaint();
 		}
 	}
