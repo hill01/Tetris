@@ -42,7 +42,7 @@ public class LShapedTetromino extends Tetromino {
 		}else{
 			center = blockPositions.get(1);
 			newPositions.add(center - 100);
-			newPositions.add(center - 100 - 1);	
+			newPositions.add(center - 100 + 1);	
 			newPositions.add(center);
 			newPositions.add(center + 100);
 			currentRotation = 0;

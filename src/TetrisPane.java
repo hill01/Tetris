@@ -21,7 +21,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	private static int blockSize = 20; //determines the size of the panel
 	private static int width;
 	private static int height;
-	private static int speed; //milliseconds, length of one "turn"
+	private static int speed; //length of one "turn", in milliseconds
 	private static boolean lockInDelay; //if true block wont lock in
 	private static Tetromino currentTetromino;
 	
@@ -138,6 +138,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		return null;
 	}
 	
+	//this method is called once every 'turn'
 	//locking blocks into place occurs in this method
 	@Override
 	public void actionPerformed(ActionEvent event) {
