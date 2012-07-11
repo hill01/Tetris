@@ -13,6 +13,7 @@ public class JShapedTetromino extends Tetromino{
 			blockPositions.add(positions[i]);
 		}
 		currentRotation = 0;
+		//green
 		colors[0] = new Color(0, 255, 0);
 		colors[1] = new Color(102, 255, 102);
 		colors[2] = new Color(0, 204, 0);

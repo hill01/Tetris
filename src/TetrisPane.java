@@ -17,21 +17,23 @@ import javax.swing.Timer;
 
 @SuppressWarnings("serial")
 public class TetrisPane extends JPanel implements ActionListener, KeyListener{
+	
 	private static Timer timer;
 	private static int blockSize = 20; //determines the size of the panel
 	private static int width;
 	private static int height;
 	private static int speed; //length of one "turn", in milliseconds
 	private static boolean lockInDelay; //if true block wont lock in
-	private static int tetrominoCount;
+	private static int tetrominoCount; //counts how far into randomGenerator you are
 	private static Tetromino currentTetromino;
-	List<Tetromino> randomGenerator = new ArrayList<Tetromino>();
+	List<Tetromino> randomGenerator = new ArrayList<Tetromino>(); //bag of 7 all tetrominos
 	
 	//Integer represents coordinates, the 100 digits represent x coordinates 0-9
 	//10 and 1 digits represent y coordinates 0-19
 	//e.g. 812 represents the (x, y)-coordinate (8, 12)
 	//x = Integer / 100, y = Integer % 100
 	//grid contains only locked in blocks, not the active tetromino
+	//if the Color[] value is null, then the space is unoccupied
 	private static Map<Integer, Color[]> grid = new HashMap<Integer, Color[]>();
 	
 	
@@ -42,7 +44,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		setPreferredSize(new Dimension(width, height));
 		setFocusable(true);
 		addKeyListener(this);
-		speed = 500; 
+		speed = 300; 
 		timer = new Timer(speed, this);
 		timer.setInitialDelay(speed);
 		timer.start();
@@ -60,8 +62,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		
 		currentTetromino = nextTetromino();
 		
-		//the boolean values in the map represent
-		//whether or not the space on the grid is occupied
+		//null value means the space is unoccupied
 		for(int i = 0; i < 10; i++){
 			for(int j = 0; j < 20; j++){
 				Integer coords = (i * 100) + j;
@@ -70,38 +71,54 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		}
 	}
 	
+	//draws one block. coord is the blocks coordinates, 
+	//colors is the 3 colors for the block, the main color, highlight, and shadow
 	private void drawBlock(Integer coord, Color[] colors, Graphics g){
 		int x = coord / 100 * blockSize;
 		int y = coord % 100 * blockSize;
+		
+		//fill in the main color
 		g.setColor(colors[0]);
 		g.fillRect(x, y, blockSize, blockSize);
+		
+		//draw highlights
 		g.setColor(colors[1]);
 		g.drawLine(x + 1, y + 1, x + blockSize - 1, y + 1);
 		g.drawLine(x + 2, y + 2, x + blockSize - 2, y + 2);
 		g.drawLine(x + 1, y + 1, x + 1, y + blockSize - 1);
 		g.drawLine(x + 2, y + 2, x + 2, y + blockSize - 2);
+		
+		//draw shading
 		g.setColor(colors[2]);
 		g.drawLine(x + 3, y + blockSize - 2, x + blockSize - 1, y + blockSize - 2);
 		g.drawLine(x + 2, y + blockSize - 1, x + blockSize - 1, y + blockSize - 1);
 		g.drawLine(x + blockSize - 2, y + 3, x + blockSize - 2, y + blockSize - 1);
 		g.drawLine(x + blockSize - 1, y + 2, x + blockSize - 1, y + blockSize - 1);
+		
+		//draw outline
 		g.setColor(new Color(0, 0, 51));
 		g.drawRect(x, y, blockSize, blockSize);
 	}
 	
+	//called (by calling repaint()) once a 'turn', or any time an arrow key is pressed
 	public void paintComponent(Graphics g){
-		g.setColor(new Color(218, 227, 235));
+		//clear the pane with background color
+		//alternate bg color new Color(218, 227, 235) light gray
+		//new Color(0, 0, 51) near black
+		g.setColor(new Color(0, 0, 51));
 		g.fillRect(0, 0, width, height);
 		
+		//draw all the current locked in blocks
 		for(Integer coord : grid.keySet()){
 			if(grid.get(coord) != null){
 				drawBlock(coord, grid.get(coord), g);
 			}
 		}
+		
+		//draw the current tetromino
 		for(Integer coord : currentTetromino.getBlockPositions()){
 			drawBlock(coord, currentTetromino.getColors(), g);
 		}
-		
 	}
 
 	
@@ -109,6 +126,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		//check each of 20 rows
 		for(int y = 0; y < 20; y++){
 			boolean rowFull = true;
+			//check each block in the current row
 			for(int x = 0; x < 10; x++){
 				Integer coord = x * 100 + y;
 				if(grid.get(coord) == null){
@@ -117,10 +135,12 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 				}
 			}
 			if(rowFull){
+				//clears each block in the current row
 				for(int x = 0; x < 10; x++){
 					Integer coord = x * 100 + y;
 					grid.put(coord, null);
 				}
+				//moves each block above the cleared row down a space
 				for(int i = y - 1; i > 0; i--){
 					for(int x = 0; x < 10; x++){
 						Integer coord = x * 100 + i;
@@ -134,6 +154,8 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		}
 	}
 	
+	//returns true if the game is over
+	//currently defined as any of the possible top row spawn locations being occupied
 	private boolean gameOver(){
 		if(grid.get(300) != null || grid.get(400) != null || grid.get(500) != null || grid.get(600) != null){
 			return true;
@@ -142,9 +164,13 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		}
 	}
 	
+	//returns the next tetromino in the shuffled bag of tetrominos
+	//the bag contains one of each possible tetrominos
 	private Tetromino nextTetromino(){
 		Tetromino next = randomGenerator.get(tetrominoCount);
 		tetrominoCount++;
+		
+		//create and shuffle a new bag of all 7 tetrominos
 		if(tetrominoCount > 6){
 			tetrominoCount = 0;
 			randomGenerator.clear();
@@ -160,7 +186,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		return next;
 	}
 	
-	//this method is called once every 'turn'
+	//this method is called once every 'turn' (based on the Timer, every 'speed' milliseconds)
 	//locking blocks into place occurs in this method
 	@Override
 	public void actionPerformed(ActionEvent event) {

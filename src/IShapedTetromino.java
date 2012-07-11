@@ -13,18 +13,21 @@ public class IShapedTetromino extends Tetromino{
 			blockPositions.add(positions[i]);
 		}
 		currentRotation = 0;
+		//light blue
 		colors[0] = new Color(102, 204, 255);
 		colors[1] = new Color(153, 255, 255);
 		colors[2] = new Color(151, 153, 204);
 	}
 	
+	//I-Shaped has special wall kicks because it can potetially rotate two spaces off sceen
+	//all other blocks can only rotate one space off screen at most
 	@Override
 	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Color[]> grid){
 		List<Integer> newPosition = new ArrayList<Integer>();
 		
 		//ceiling kick
-		boolean ceilingKick1 = false;
-		boolean ceilingKick2 = false;
+		boolean ceilingKick1 = false; //true if it needs to kick down 1 space
+		boolean ceilingKick2 = false; //true if it needs to kick down 2 spaces
 		List<Integer> kickDown = new ArrayList<Integer>();
 		for(Integer block : failedRotation){
 			if(block % 100 == 99){
@@ -56,7 +59,7 @@ public class IShapedTetromino extends Tetromino{
 		if(checkLegalMove(newPosition, grid)){
 			return newPosition;
 		}else{
-			//try to kick 2 spaced to the right
+			//try to kick 2 spaces to the right
 			newPosition = new ArrayList<Integer>();
 			for(Integer block : failedRotation){
 				Integer newBlock = block + 200;
@@ -67,6 +70,8 @@ public class IShapedTetromino extends Tetromino{
 			}
 			
 			//kick to the left, returns even if its not a legal move
+			//because of its center of rotation, there is no need
+			//to attempt to kick 2 spaces to the left
 			newPosition = new ArrayList<Integer>();
 			for(Integer block : failedRotation){
 				Integer newBlock = block - 100;

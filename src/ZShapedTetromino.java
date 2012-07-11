@@ -13,6 +13,7 @@ public class ZShapedTetromino extends Tetromino {
 			blockPositions.add(positions[i]);
 		}
 		currentRotation = 0;
+		//orange
 		colors[0] = new Color(255, 102, 0);
 		colors[1] = new Color(255, 153, 51);
 		colors[2] = new Color(204, 102, 0);

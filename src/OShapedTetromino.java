@@ -11,6 +11,7 @@ public class OShapedTetromino extends Tetromino{
 		for(int i = 0; i < 4; i++){
 			blockPositions.add(positions[i]);
 		}
+		//yellow
 		colors[0] = new Color(255, 255, 0);
 		colors[1] = new Color(255, 255, 153);
 		colors[2] = new Color(255, 204, 0);

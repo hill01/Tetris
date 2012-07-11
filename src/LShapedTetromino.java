@@ -13,6 +13,7 @@ public class LShapedTetromino extends Tetromino {
 			blockPositions.add(positions[i]);
 		}
 		currentRotation = 0;
+		//red
 		colors[0] = new Color(255, 0, 0);
 		colors[1] = new Color(255, 102, 102);
 		colors[2] = new Color(204, 0, 0);
