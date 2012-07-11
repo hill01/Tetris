@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,37 +13,13 @@ public class IShapedTetromino extends Tetromino{
 			blockPositions.add(positions[i]);
 		}
 		currentRotation = 0;
+		colors[0] = new Color(102, 204, 255);
+		colors[1] = new Color(153, 255, 255);
+		colors[2] = new Color(151, 153, 204);
 	}
 	
 	@Override
-	public void rotate(Map<Integer, Boolean> grid){
-		Integer center = blockPositions.get(2);
-		List<Integer> newPositions = new ArrayList<Integer>();
-		if(currentRotation == 0){			
-			newPositions.add(center - 2);
-			newPositions.add(center - 1);
-			newPositions.add(center);
-			newPositions.add(center + 1);
-			currentRotation = 1;
-		}else{
-			newPositions.add(center - 200);
-			newPositions.add(center - 100);
-			newPositions.add(center);
-			newPositions.add(center + 100);
-			currentRotation = 0;
-		}
-		if(checkLegalMove(newPositions, grid)){
-			blockPositions = newPositions;
-		}else{
-			newPositions = wallKick(newPositions, grid);
-			if(checkLegalMove(newPositions, grid)){
-				blockPositions = newPositions;
-			}
-		}
-	}
-	
-	@Override
-	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Boolean> grid){
+	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Color[]> grid){
 		List<Integer> newPosition = new ArrayList<Integer>();
 		
 		//ceiling kick
@@ -99,4 +76,30 @@ public class IShapedTetromino extends Tetromino{
 		}
 	}
 
+	@Override
+	public void rotate(Map<Integer, Color[]> grid) {
+		Integer center = blockPositions.get(2);
+		List<Integer> newPositions = new ArrayList<Integer>();
+		if(currentRotation == 0){			
+			newPositions.add(center - 2);
+			newPositions.add(center - 1);
+			newPositions.add(center);
+			newPositions.add(center + 1);
+			currentRotation = 1;
+		}else{
+			newPositions.add(center - 200);
+			newPositions.add(center - 100);
+			newPositions.add(center);
+			newPositions.add(center + 100);
+			currentRotation = 0;
+		}
+		if(checkLegalMove(newPositions, grid)){
+			blockPositions = newPositions;
+		}else{
+			newPositions = wallKick(newPositions, grid);
+			if(checkLegalMove(newPositions, grid)){
+				blockPositions = newPositions;
+			}
+		}
+	}
 }

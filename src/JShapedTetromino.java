@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +13,13 @@ public class JShapedTetromino extends Tetromino{
 			blockPositions.add(positions[i]);
 		}
 		currentRotation = 0;
+		colors[0] = new Color(0, 255, 0);
+		colors[1] = new Color(102, 255, 102);
+		colors[2] = new Color(0, 204, 0);
 	}
 	
 	@Override
-	public void rotate(Map<Integer, Boolean> grid) {
+	public void rotate(Map<Integer, Color[]> grid) {
 		Integer center;
 		List<Integer> newPositions = new ArrayList<Integer>();
 		if(currentRotation == 0){

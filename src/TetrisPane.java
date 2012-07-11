@@ -32,7 +32,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	//e.g. 812 represents the (x, y)-coordinate (8, 12)
 	//x = Integer / 100, y = Integer % 100
 	//grid contains only locked in blocks, not the active tetromino
-	private static Map<Integer, Boolean> grid = new HashMap<Integer, Boolean>();
+	private static Map<Integer, Color[]> grid = new HashMap<Integer, Color[]>();
 	
 	
 	public TetrisPane(){
@@ -42,7 +42,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		setPreferredSize(new Dimension(width, height));
 		setFocusable(true);
 		addKeyListener(this);
-		speed = 1000; 
+		speed = 500; 
 		timer = new Timer(speed, this);
 		timer.setInitialDelay(speed);
 		timer.start();
@@ -65,45 +65,43 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		for(int i = 0; i < 10; i++){
 			for(int j = 0; j < 20; j++){
 				Integer coords = (i * 100) + j;
-				Boolean occupied = false;
-				grid.put(coords, occupied);
+				grid.put(coords, null);
 			}
 		}
 	}
 	
-	private void drawBlock(List<Integer> coords, Graphics g){
-		for(Integer coord : coords){
-			int x = coord / 100 * blockSize;
-			int y = coord % 100 * blockSize;
-			g.setColor(new Color(0, 0, 255));
-			g.fillRect(x, y, blockSize, blockSize);
-			g.setColor(new Color(102, 102, 255));
-			g.drawLine(x + 1, y + 1, x + blockSize - 1, y + 1);
-			g.drawLine(x + 2, y + 2, x + blockSize - 2, y + 2);
-			g.drawLine(x + 1, y + 1, x + 1, y + blockSize - 1);
-			g.drawLine(x + 2, y + 2, x + 2, y + blockSize - 2);
-			g.setColor(new Color(0, 0, 204));
-			g.drawLine(x + 3, y + blockSize - 2, x + blockSize - 1, y + blockSize - 2);
-			g.drawLine(x + 2, y + blockSize - 1, x + blockSize - 1, y + blockSize - 1);
-			g.drawLine(x + blockSize - 2, y + 3, x + blockSize - 2, y + blockSize - 1);
-			g.drawLine(x + blockSize - 1, y + 2, x + blockSize - 1, y + blockSize - 1);
-			g.setColor(new Color(0, 0, 51));
-			g.drawRect(x, y, blockSize, blockSize);
-		}
+	private void drawBlock(Integer coord, Color[] colors, Graphics g){
+		int x = coord / 100 * blockSize;
+		int y = coord % 100 * blockSize;
+		g.setColor(colors[0]);
+		g.fillRect(x, y, blockSize, blockSize);
+		g.setColor(colors[1]);
+		g.drawLine(x + 1, y + 1, x + blockSize - 1, y + 1);
+		g.drawLine(x + 2, y + 2, x + blockSize - 2, y + 2);
+		g.drawLine(x + 1, y + 1, x + 1, y + blockSize - 1);
+		g.drawLine(x + 2, y + 2, x + 2, y + blockSize - 2);
+		g.setColor(colors[2]);
+		g.drawLine(x + 3, y + blockSize - 2, x + blockSize - 1, y + blockSize - 2);
+		g.drawLine(x + 2, y + blockSize - 1, x + blockSize - 1, y + blockSize - 1);
+		g.drawLine(x + blockSize - 2, y + 3, x + blockSize - 2, y + blockSize - 1);
+		g.drawLine(x + blockSize - 1, y + 2, x + blockSize - 1, y + blockSize - 1);
+		g.setColor(new Color(0, 0, 51));
+		g.drawRect(x, y, blockSize, blockSize);
 	}
 	
 	public void paintComponent(Graphics g){
 		g.setColor(new Color(218, 227, 235));
 		g.fillRect(0, 0, width, height);
 		
-		List<Integer> occupiedSpaces = new ArrayList<Integer>();
 		for(Integer coord : grid.keySet()){
-			if(grid.get(coord) == true){
-				occupiedSpaces.add(coord);
+			if(grid.get(coord) != null){
+				drawBlock(coord, grid.get(coord), g);
 			}
 		}
-		drawBlock(occupiedSpaces, g);
-		drawBlock(currentTetromino.getBlockPositions(), g);
+		for(Integer coord : currentTetromino.getBlockPositions()){
+			drawBlock(coord, currentTetromino.getColors(), g);
+		}
+		
 	}
 
 	
@@ -113,7 +111,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 			boolean rowFull = true;
 			for(int x = 0; x < 10; x++){
 				Integer coord = x * 100 + y;
-				if(grid.get(coord) == false){
+				if(grid.get(coord) == null){
 					rowFull = false;
 					break; //breaks inner loop only
 				}
@@ -121,14 +119,14 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 			if(rowFull){
 				for(int x = 0; x < 10; x++){
 					Integer coord = x * 100 + y;
-					grid.put(coord, false);
+					grid.put(coord, null);
 				}
 				for(int i = y - 1; i > 0; i--){
 					for(int x = 0; x < 10; x++){
 						Integer coord = x * 100 + i;
-						if(grid.get(coord) == true){
-							grid.put(coord, false);
-							grid.put(coord + 1, true);
+						if(grid.get(coord) != null){
+							grid.put(coord + 1, grid.get(coord));
+							grid.put(coord, null);
 						}
 					}
 				}
@@ -137,7 +135,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	}
 	
 	private boolean gameOver(){
-		if(grid.get(300) == true || grid.get(400) == true || grid.get(500) == true || grid.get(600) == true){
+		if(grid.get(300) != null || grid.get(400) != null || grid.get(500) != null || grid.get(600) != null){
 			return true;
 		}else{
 			return false;
@@ -177,7 +175,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		}else{
 			//this is where the current piece gets locked into place
 			for(Integer coord : currentTetromino.getBlockPositions()){
-				grid.put(coord, true);
+				grid.put(coord, currentTetromino.getColors());
 			}
 			currentTetromino = nextTetromino();
 			lockInDelay = true;

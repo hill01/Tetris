@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -6,9 +7,17 @@ import java.util.Map;
 public abstract class Tetromino {
 	protected List<Integer> blockPositions;
 	protected int currentRotation;
+	protected Color[] colors = new Color[3];
+	//color[0] = main color
+	//color[1] = highlight
+	//color[2] = shading
 		
 	public List<Integer> getBlockPositions() {
 		return blockPositions;
+	}
+	
+	public Color[] getColors(){
+		return colors;
 	}
 
 	//returns the positions immediately below the current blocks
@@ -22,7 +31,7 @@ public abstract class Tetromino {
 		return nextPositions;
 	}
 	
-	public void moveDown(Map<Integer, Boolean> grid){
+	public void moveDown(Map<Integer, Color[]> grid){
 		List<Integer> newPositions = new ArrayList<Integer>();
 		for(Integer block : blockPositions){
 			Integer newBlock = block + 1;
@@ -33,7 +42,7 @@ public abstract class Tetromino {
 		}
 	}
 	
-	public void moveLeft(Map<Integer, Boolean> grid){		
+	public void moveLeft(Map<Integer, Color[]> grid){		
 		List<Integer> newPositions = new ArrayList<Integer>();
 		for(Integer block : blockPositions){
 			Integer newBlock = block - 100;
@@ -44,7 +53,7 @@ public abstract class Tetromino {
 		}
 	}
 	
-	public void moveRight(Map<Integer, Boolean> grid){
+	public void moveRight(Map<Integer, Color[]> grid){
 		List<Integer> newPositions = new ArrayList<Integer>();
 		for(Integer block : blockPositions){
 			Integer newBlock = block + 100;
@@ -55,18 +64,18 @@ public abstract class Tetromino {
 		}
 	}
 	
-	public boolean checkLegalMove(List<Integer> newPositions, Map<Integer, Boolean> grid){
+	public boolean checkLegalMove(List<Integer> newPositions, Map<Integer, Color[]> grid){
 		for(Integer coord : newPositions){
 			Integer x = coord / 100;
 			Integer y = coord % 100;
-			if(x < 0 || x > 9 || y < 0 || y > 19 || grid.get(coord) == true){
+			if(x < 0 || x > 9 || y < 0 || y > 19 || grid.get(coord) != null){
 				return false;
 			}
 		}
 		return true;		
 	}
 	
-	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Boolean> grid){
+	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Color[]> grid){
 		List<Integer> newPosition = new ArrayList<Integer>();
 		
 		//ceiling kick
@@ -102,5 +111,5 @@ public abstract class Tetromino {
 		}
 	}
 	
-	public abstract void rotate(Map<Integer, Boolean> grid);
+	public abstract void rotate(Map<Integer, Color[]> grid);
 }
