@@ -44,6 +44,32 @@ public class IShapedTetromino extends Tetromino{
 	@Override
 	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Boolean> grid){
 		List<Integer> newPosition = new ArrayList<Integer>();
+		
+		//ceiling kick
+		boolean ceilingKick1 = false;
+		boolean ceilingKick2 = false;
+		List<Integer> kickDown = new ArrayList<Integer>();
+		for(Integer block : failedRotation){
+			if(block % 100 == 99){
+				ceilingKick1 = true;
+			}
+			if(block % 100 == 98){
+				ceilingKick2 = true;
+			}
+		}
+		for(Integer block : failedRotation){
+			if(ceilingKick2 == true){
+				Integer newBlock = block + 2;
+				kickDown.add(newBlock);
+			}else{
+				Integer newBlock = block + 1;
+				kickDown.add(newBlock);
+			}
+		}
+		if(ceilingKick1 == true || ceilingKick2 == true && checkLegalMove(kickDown, grid)){
+			return kickDown;
+		}
+		
 		//attempt to kick to the right
 		for(Integer block : failedRotation){
 			Integer newBlock = block + 100;

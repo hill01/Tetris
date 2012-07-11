@@ -68,6 +68,21 @@ public abstract class Tetromino {
 	
 	protected List<Integer> wallKick(List<Integer> failedRotation, Map<Integer, Boolean> grid){
 		List<Integer> newPosition = new ArrayList<Integer>();
+		
+		//ceiling kick
+		boolean ceilingKick = false;
+		List<Integer> kickDown = new ArrayList<Integer>();
+		for(Integer block : failedRotation){
+			if(block % 100 == 99){
+				ceilingKick = true;
+			}
+			Integer newBlock = block + 1;
+			kickDown.add(newBlock);
+		}
+		if(ceilingKick == true && checkLegalMove(kickDown, grid)){
+			return kickDown;
+		}
+		
 		//attempt to kick to the right
 		for(Integer block : failedRotation){
 			Integer newBlock = block + 100;
