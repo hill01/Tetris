@@ -6,10 +6,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -23,7 +23,9 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	private static int height;
 	private static int speed; //length of one "turn", in milliseconds
 	private static boolean lockInDelay; //if true block wont lock in
+	private static int tetrominoCount;
 	private static Tetromino currentTetromino;
+	List<Tetromino> randomGenerator = new ArrayList<Tetromino>();
 	
 	//Integer represents coordinates, the 100 digits represent x coordinates 0-9
 	//10 and 1 digits represent y coordinates 0-19
@@ -45,6 +47,16 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		timer.setInitialDelay(speed);
 		timer.start();
 		lockInDelay = true;
+		tetrominoCount = 0;
+		
+		randomGenerator.add(new IShapedTetromino());
+		randomGenerator.add(new JShapedTetromino());
+		randomGenerator.add(new LShapedTetromino());
+		randomGenerator.add(new SShapedTetromino());
+		randomGenerator.add(new ZShapedTetromino());
+		randomGenerator.add(new OShapedTetromino());
+		randomGenerator.add(new TShapedTetromino());
+		Collections.shuffle(randomGenerator);
 		
 		currentTetromino = nextTetromino();
 		
@@ -133,19 +145,21 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	}
 	
 	private Tetromino nextTetromino(){
-		//to do: make them spawn more 'evenly' over the short term
-		Random rand = new Random();
-		int next = rand.nextInt(7);
-		switch(next){
-			case 0: return new OShapedTetromino();
-			case 1: return new IShapedTetromino();
-			case 2: return new SShapedTetromino();
-			case 3: return new ZShapedTetromino();
-			case 4: return new TShapedTetromino();
-			case 5: return new LShapedTetromino();
-			case 6: return new JShapedTetromino();
+		Tetromino next = randomGenerator.get(tetrominoCount);
+		tetrominoCount++;
+		if(tetrominoCount > 6){
+			tetrominoCount = 0;
+			randomGenerator.clear();
+			randomGenerator.add(new IShapedTetromino());
+			randomGenerator.add(new JShapedTetromino());
+			randomGenerator.add(new LShapedTetromino());
+			randomGenerator.add(new SShapedTetromino());
+			randomGenerator.add(new ZShapedTetromino());
+			randomGenerator.add(new OShapedTetromino());
+			randomGenerator.add(new TShapedTetromino());
+			Collections.shuffle(randomGenerator);
 		}
-		return null;
+		return next;
 	}
 	
 	//this method is called once every 'turn'
