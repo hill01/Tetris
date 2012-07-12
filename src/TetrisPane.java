@@ -25,6 +25,9 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	private static int speed; //length of one "turn", in milliseconds
 	private static boolean lockInDelay; //if true block wont lock in
 	private static int tetrominoCount; //counts how far into randomGenerator you are
+	private static int level;
+	private static int score;
+	private static int linesCleared;
 	private static Tetromino currentTetromino;
 	List<Tetromino> randomGenerator = new ArrayList<Tetromino>(); //bag of 7 all tetrominos
 	
@@ -44,12 +47,15 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		setPreferredSize(new Dimension(width, height));
 		setFocusable(true);
 		addKeyListener(this);
-		speed = 300; 
+		speed = 500; 
 		timer = new Timer(speed, this);
 		timer.setInitialDelay(speed);
 		timer.start();
 		lockInDelay = true;
 		tetrominoCount = 0;
+		level = 0;
+		score = 0;
+		linesCleared = 0;		
 		
 		randomGenerator.add(new IShapedTetromino());
 		randomGenerator.add(new JShapedTetromino());
@@ -105,7 +111,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		//clear the pane with background color
 		//alternate bg color new Color(218, 227, 235) light gray
 		//new Color(0, 0, 51) near black
-		g.setColor(new Color(0, 0, 51));
+		g.setColor(new Color(218, 227, 235));
 		g.fillRect(0, 0, width, height);
 		
 		//draw all the current locked in blocks
@@ -121,8 +127,10 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		}
 	}
 
-	
+	//leveling up, speed increase and some scoring occur in this method
 	private void clearFullRows(){
+		int rowsCleared = 0;
+		
 		//check each of 20 rows
 		for(int y = 0; y < 20; y++){
 			boolean rowFull = true;
@@ -135,6 +143,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 				}
 			}
 			if(rowFull){
+				rowsCleared++;
 				//clears each block in the current row
 				for(int x = 0; x < 10; x++){
 					Integer coord = x * 100 + y;
@@ -151,7 +160,22 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 					}
 				}
 			}
+		}		
+		//scoring
+		switch(rowsCleared){
+			case 1: score += 40 * (level + 1);
+					break;
+			case 2: score += 100 * (level + 1);
+					break;
+			case 3: score += 300 * (level + 1);
+					break;
+			case 4: score += 1200 * (level + 1);
+					break;
 		}
+		linesCleared += rowsCleared;
+		level = linesCleared / 10;
+		speed = Math.max(500 - 50 * level, 100);
+		timer.setDelay(speed);
 	}
 	
 	//returns true if the game is over
@@ -195,6 +219,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		}
 		if(currentTetromino.checkLegalMove(currentTetromino.getNextPositions(), grid)){			
 			currentTetromino.moveDown(grid);
+			score += 1;
 		}else if(lockInDelay){
 			//delays lock in by one 'turn'
 			lockInDelay = false;
@@ -221,6 +246,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 			if(currentTetromino.checkLegalMove(currentTetromino.getNextPositions(), grid)){			
 				currentTetromino.moveDown(grid);
 				lockInDelay = false;
+				score += 1;
 				repaint();
 			}			
 		}else if(keyCode == KeyEvent.VK_LEFT){
