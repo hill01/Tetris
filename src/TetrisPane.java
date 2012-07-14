@@ -29,6 +29,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	private static int score;
 	private static int linesCleared;
 	private static Tetromino currentTetromino;
+	private static Tetromino nextTetromino;
 	List<Tetromino> randomGenerator = new ArrayList<Tetromino>(); //bag of 7 all tetrominos
 	InfoPane infoPane;
 	
@@ -69,6 +70,8 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		Collections.shuffle(randomGenerator);
 		
 		currentTetromino = nextTetromino();
+		nextTetromino = nextTetromino();
+		infoPane.setNextTetromino(nextTetromino);
 		
 		//null value means the space is unoccupied
 		for(int i = 0; i < 10; i++){
@@ -223,6 +226,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	
 	//this method is called once every 'turn' (based on the Timer, every 'speed' milliseconds)
 	//locking blocks into place occurs in this method
+	//some score increase occurs here
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(gameOver()){
@@ -240,12 +244,15 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 				grid.put(coord, currentTetromino.getColors());
 			}
 			clearFullRows();
-			currentTetromino = nextTetromino();
+			currentTetromino = nextTetromino;
+			nextTetromino = nextTetromino();
+			infoPane.setNextTetromino(nextTetromino);
 			lockInDelay = true;
 		}
 		repaint();
 	}
 	
+	//some score increase occurs here too
 	@Override
 	public void keyPressed(KeyEvent event) {
 		int keyCode = event.getKeyCode();
