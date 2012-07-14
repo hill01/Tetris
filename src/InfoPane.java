@@ -1,4 +1,6 @@
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
@@ -21,13 +23,25 @@ public class InfoPane extends JPanel{
 	
 	public void setScore(int s){
 		score = s;
+		repaint();
 	}
 	
 	public void setLevel(int l){
 		level = l;
+		repaint();
 	}
 	
 	public void setLinesCleared(int lc){
 		linesCleared = lc;
+		repaint();
+	}
+	
+	public void paintComponent(Graphics g){
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, width, height);
+		g.setColor(Color.BLACK);
+		g.drawString("Points: " + score, 10, 50);
+		g.drawString("Lines Cleared: " + linesCleared, 10, 100);
+		g.drawString("Level: " + level, 10, 150);
 	}
 }

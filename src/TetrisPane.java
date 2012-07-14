@@ -30,6 +30,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	private static int linesCleared;
 	private static Tetromino currentTetromino;
 	List<Tetromino> randomGenerator = new ArrayList<Tetromino>(); //bag of 7 all tetrominos
+	InfoPane infoPane;
 	
 	//Integer represents coordinates, the 100 digits represent x coordinates 0-9
 	//10 and 1 digits represent y coordinates 0-19
@@ -40,7 +41,7 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 	private static Map<Integer, Color[]> grid = new HashMap<Integer, Color[]>();
 	
 	
-	public TetrisPane(){
+	public TetrisPane(InfoPane pane){
 		super();
 		width = blockSize * 10;
 		height = blockSize * 20;
@@ -55,7 +56,8 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		tetrominoCount = 0;
 		level = 0;
 		score = 0;
-		linesCleared = 0;		
+		linesCleared = 0;	
+		infoPane = pane;
 		
 		randomGenerator.add(new IShapedTetromino());
 		randomGenerator.add(new JShapedTetromino());
@@ -125,6 +127,10 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		for(Integer coord : currentTetromino.getBlockPositions()){
 			drawBlock(coord, currentTetromino.getColors(), g);
 		}
+		
+		//draw border
+		g.setColor(new Color(0, 0, 51));
+		g.drawRect(0, 0, width - 1, height - 1);
 	}
 
 	//leveling up, speed increase and some scoring occur in this method
@@ -176,6 +182,11 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 		level = linesCleared / 10;
 		speed = Math.max(500 - 50 * level, 100);
 		timer.setDelay(speed);
+		
+		//update the info pane
+		infoPane.setLevel(level);
+		infoPane.setScore(score);
+		infoPane.setLinesCleared(linesCleared);
 	}
 	
 	//returns true if the game is over
@@ -228,10 +239,10 @@ public class TetrisPane extends JPanel implements ActionListener, KeyListener{
 			for(Integer coord : currentTetromino.getBlockPositions()){
 				grid.put(coord, currentTetromino.getColors());
 			}
+			clearFullRows();
 			currentTetromino = nextTetromino();
 			lockInDelay = true;
 		}
-		clearFullRows();
 		repaint();
 	}
 	
