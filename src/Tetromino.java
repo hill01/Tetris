@@ -12,7 +12,7 @@ public abstract class Tetromino {
 	//color[1] = highlight
 	//color[2] = shading
 		
-	public List<Integer> getBlockPositions() {
+	public List<Integer> getCoordinates() {
 		return blockPositions;
 	}
 	
@@ -21,7 +21,7 @@ public abstract class Tetromino {
 	}
 
 	//returns the positions immediately below the current blocks
-	public List<Integer> getNextPositions() {
+	public List<Integer> getNextCoords() {
 		List<Integer> nextPositions = new ArrayList<Integer>();
 		for(Integer coord : blockPositions){
 			//adding 1 increments the y-coordinate
