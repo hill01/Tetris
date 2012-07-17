@@ -6,7 +6,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-
+//this panel displays the score, level, etc.
 @SuppressWarnings("serial")
 public class InfoPanel extends JPanel{
 	int blockSize = 20;

@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +15,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-
+//this panel displays the tetris game
 @SuppressWarnings("serial")
 public class TetrisPanel extends JPanel implements ActionListener, KeyListener{
 	
@@ -134,6 +135,18 @@ public class TetrisPanel extends JPanel implements ActionListener, KeyListener{
 		//draw border
 		g.setColor(new Color(0, 0, 51));
 		g.drawRect(0, 0, width - 1, height - 1);
+		
+		//displays game over on screen
+		if(gameOver()){
+			g.setColor(Color.BLACK);
+			g.fillRect(40, 140, 120, 80);
+			g.setColor(new Color(0, 0, 51));
+			g.drawRect(40, 140, 119, 79);
+			g.setFont(new Font("Monospaced", Font.BOLD, 20));
+			g.setColor(Color.GREEN);
+			g.drawString("GAME", 75, 175);
+			g.drawString("OVER", 75, 200);
+		}
 	}
 
 	//leveling up, speed increase and some scoring occur in this method
@@ -194,7 +207,8 @@ public class TetrisPanel extends JPanel implements ActionListener, KeyListener{
 	
 	//returns true if the game is over
 	//currently defined as any of the possible top row spawn locations being occupied
-	private boolean gameOver(){
+	//currently no way to start a new game. must exit the program and relaunch
+	public boolean gameOver(){
 		if(grid.get(300) != null || grid.get(400) != null || grid.get(500) != null || grid.get(600) != null){
 			return true;
 		}else{
@@ -229,9 +243,6 @@ public class TetrisPanel extends JPanel implements ActionListener, KeyListener{
 	//some score increase occurs here
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if(gameOver()){
-			//do some game over stuff
-		}
 		if(currentTetromino.checkLegalMove(currentTetromino.getNextCoords(), grid)){			
 			currentTetromino.moveDown(grid);
 			score += 1;

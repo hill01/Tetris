@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+//this panel displays the next tetromino
 @SuppressWarnings("serial")
 public class NextTetrominoPanel extends JPanel{
 	private Tetromino nextTetromino;
